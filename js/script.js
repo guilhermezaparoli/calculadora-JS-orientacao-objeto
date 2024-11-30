@@ -18,6 +18,24 @@ class Calculator {
         this.resultValue.textContent = 0
     }
 
+    sum(n1, n2) {
+        return parseFloat(n1) + parseFloat(n2)
+    }
+    subtraction(n1, n2) {
+        return parseFloat(n1) - parseFloat(n2)
+    }
+    multiplication(n1, n2) {
+        return parseFloat(n1) * parseFloat(n2)
+    }
+    division(n1, n2) {
+        return parseFloat(n1) / parseFloat(n2)
+    }
+
+    refreshValues(total) {
+        this.upperValue.textContent = total
+        this.resultValue.textContent = total
+    }
+
     resolution() {
         let upperValueArray = (this.upperValue.textContent).split(' ')
 
@@ -25,17 +43,43 @@ class Calculator {
         let result = 0
         for (let i = 0; i <= upperValueArray.length; i++) {
             let actualItem = upperValueArray[i]
+            let operation = 0;
 
-            if (actualItem === "+") {
-                result = parseFloat(upperValueArray[i - 1]) + parseFloat(upperValueArray[i + 1])
+            if (actualItem === "x") {
+                result = calc.multiplication(upperValueArray[i - 1], upperValueArray[i + 1])
+                operation = 1;
+            } else if (actualItem === "/") {
+                result = calc.division(upperValueArray[i - 1], upperValueArray[i + 1])
+                operation = 1;
+
+            } else if (!upperValueArray.includes('x') && !upperValueArray.includes('/')) {
+
+                if (actualItem === "+") {
+                    result = calc.sum(upperValueArray[i - 1], upperValueArray[i + 1])
+                    operation = 1;
+
+                } else if (actualItem === '-') {
+                    result = calc.subtraction(upperValueArray[i - 1], upperValueArray[i + 1])
+                    operation = 1;
+
+                }
+
+            }
+
+            if (operation) {
+                upperValueArray[i - 1] = result
+                upperValueArray.splice(i, 2)
+
+                i = 0
             }
         }
 
-        if(result){
+        if (result) {
             calc.reset = 1
         }
-        this.upperValue.textContent = result
-        this.resultValue.textContent = result
+
+        calc.refreshValues(result)
+
     }
 
     btnPress() {
@@ -44,7 +88,7 @@ class Calculator {
 
         var reg = new RegExp('^\\d+$');
 
-        if(calc.reset && reg.test(input)){
+        if (calc.reset && reg.test(input)) {
             upperValue = "0"
         }
 
